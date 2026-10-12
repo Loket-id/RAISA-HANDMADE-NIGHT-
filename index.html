@@ -11,12 +11,16 @@
 <meta property="og:image" content="banner.png">
 <meta property="og:site_name" content="LOKET13">
 <meta property="og:locale" content="id_ID">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="RAISA HANDMADE NIGHT | LOKET13">
+<meta name="twitter:description" content="Live performance RAISA merayakan satu dekade album Handmade. Rabu, 4 November 2026, 19.00–22.00 WIB di Graha Bhakti Budaya, Jakarta Pusat.">
+<meta name="twitter:image" content="banner.png">
 <link rel="icon" type="image/png" href="logo.png">
 <link rel="apple-touch-icon" href="logo.png">
 <link rel="preload" as="image" href="banner.png" fetchpriority="high">
 <title>RAISA HANDMADE NIGHT | LOKET13</title>
 <script type="application/ld+json">
-{"@context":"https://schema.org","@type":"Event","name":"RAISA HANDMADE NIGHT","startDate":"2026-11-04T19:00:00+07:00","endDate":"2026-11-04T22:00:00+07:00","eventStatus":"https://schema.org/EventScheduled","image":["banner.png"],"description":"Live performance RAISA merayakan satu dekade album Handmade di Graha Bhakti Budaya, Jakarta Pusat.","location":{"@type":"Place","name":"Graha Bhakti Budaya","address":{"@type":"PostalAddress","streetAddress":"Jl. Cikini Raya No. 73","addressLocality":"Jakarta Pusat","addressRegion":"DKI Jakarta","addressCountry":"ID"}},"organizer":{"@type":"Organization","name":"JUNI Concert"},"offers":[
+{"@context":"https://schema.org","@type":"Event","name":"RAISA HANDMADE NIGHT","startDate":"2026-11-04T19:00:00+07:00","endDate":"2026-11-04T22:00:00+07:00","eventStatus":"https://schema.org/EventScheduled","eventAttendanceMode":"https://schema.org/OfflineEventAttendanceMode","image":["banner.png"],"description":"Live performance RAISA merayakan satu dekade album Handmade di Graha Bhakti Budaya, Jakarta Pusat.","location":{"@type":"Place","name":"Graha Bhakti Budaya","address":{"@type":"PostalAddress","streetAddress":"Jl. Cikini Raya No. 73","addressLocality":"Jakarta Pusat","addressRegion":"DKI Jakarta","addressCountry":"ID"}},"organizer":{"@type":"Organization","name":"JUNI Concert"},"performer":{"@type":"Person","name":"RAISA"},"offers":[
 {"@type":"Offer","name":"CAT 1 - CENTER","price":"1250000","priceCurrency":"IDR","availability":"https://schema.org/InStock"},
 {"@type":"Offer","name":"CAT 2 - LEFT","price":"1100000","priceCurrency":"IDR","availability":"https://schema.org/SoldOut"},
 {"@type":"Offer","name":"CAT 2 - RIGHT","price":"1100000","priceCurrency":"IDR","availability":"https://schema.org/SoldOut"},
@@ -36,6 +40,7 @@ body.fade-out{opacity:0}
 .app{max-width:430px;margin:auto;background:#fff;min-height:100vh;box-shadow:0 0 30px rgba(var(--navy-rgb),.12)}
 .topbar{height:54px;padding:0 16px;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid #eef0f5;position:sticky;top:0;background:#fff;z-index:20}
 .topbar img{height:30px;width:auto;display:block}
+.progress{position:absolute;left:0;bottom:-1px;width:100%;height:3px;background:linear-gradient(90deg,var(--blue),#7a3ce8);transform-origin:0 50%;transform:scaleX(0);will-change:transform;z-index:21}
 .menu-wrap{position:relative}
 .menu-btn{background:none;border:0;padding:6px;cursor:pointer;display:grid;gap:4px}
 .menu-btn i{display:block;width:22px;height:2.5px;border-radius:2px;background:var(--navy);transition:transform .2s ease,opacity .2s ease}
@@ -83,7 +88,8 @@ h1{font-size:22px;line-height:1.3;margin:0 0 16px;font-weight:800;color:var(--na
 .pt-body{display:grid;grid-template-rows:1fr;transition:grid-template-rows .3s ease}
 .pticket.collapsed .pt-body{grid-template-rows:0fr}
 .pt-body-inner{overflow:hidden}
-.pt-row{padding:16px 18px 14px}
+.pt-row{padding:16px 18px 14px;transition:background .18s}
+.pt-row:not(.soldout):hover{background:#f7f9fd}
 .pt-row + .pt-row{border-top:1.5px dashed #d9dee8}
 .pt-row-top{display:flex;justify-content:space-between;align-items:center;gap:10px}
 .pt-type{font-size:15px;font-weight:700;color:var(--navy-ink)}
@@ -147,16 +153,17 @@ h1{font-size:22px;line-height:1.3;margin:0 0 16px;font-weight:800;color:var(--na
 .sticky-row{display:flex;justify-content:space-between;align-items:baseline;margin-bottom:9px}
 .sticky-label{font-size:12.5px;color:var(--muted)}
 .sticky-price{font-size:20px;font-weight:800;color:var(--navy)}
-.buy-btn{width:100%;border:0;border-radius:9px;background:linear-gradient(180deg,#2e70ec,#1f5cd8);color:#fff;font:inherit;font-size:16px;font-weight:800;padding:13px;cursor:pointer;box-shadow:0 6px 16px rgba(34,100,229,.35);transition:transform .15s ease,box-shadow .15s ease,background .15s ease;display:block;text-align:center;text-decoration:none;touch-action:manipulation;-webkit-tap-highlight-color:transparent}
+.buy-btn{width:100%;border:0;border-radius:9px;background:linear-gradient(180deg,#2e70ec,#1f5cd8);color:#fff;font:inherit;font-size:16px;font-weight:800;padding:13px;cursor:pointer;box-shadow:0 6px 16px rgba(34,100,229,.35);transition:transform .15s ease,box-shadow .15s ease,background .15s ease;display:block;text-align:center;text-decoration:none;touch-action:manipulation;-webkit-tap-highlight-color:transparent;animation:glow 2.6s ease-in-out infinite}
 .buy-btn:hover{background:linear-gradient(180deg,#2a67de,var(--blue-dark));box-shadow:0 8px 20px rgba(34,100,229,.45)}
 .buy-btn:active{transform:scale(.98)}
+@keyframes glow{0%,100%{box-shadow:0 6px 16px rgba(34,100,229,.35)}50%{box-shadow:0 6px 24px rgba(34,100,229,.62)}}
 .fade{opacity:0;transform:translateY(10px);transition:opacity .4s ease,transform .4s ease}
 .fade.show{opacity:1;transform:none}
-.tab:focus-visible,.buy-btn:focus-visible,.pt-head:focus-visible,.searchbar input:focus-visible,.menu-btn:focus-visible,.share:focus-visible,.social a:focus-visible,.nl-row input:focus-visible,.nl-row button:focus-visible,.to-top:focus-visible,.footer-grid a:focus-visible,.f-legal a:focus-visible{outline:2.5px solid var(--blue);outline-offset:2px;border-radius:4px}
+.tab:focus-visible,.buy-btn:focus-visible,.pt-head:focus-visible,.searchbar input:focus-visible,.menu-btn:focus-visible,.menu-panel a:focus-visible,.share:focus-visible,.social a:focus-visible,.nl-row input:focus-visible,.nl-row button:focus-visible,.to-top:focus-visible,.footer-grid a:focus-visible,.f-legal a:focus-visible{outline:2.5px solid var(--blue);outline-offset:2px;border-radius:4px}
 @media(min-width:431px){body{padding:14px 0}.app{border-radius:12px}.topbar{border-radius:12px 12px 0 0}.footer{border-radius:0 0 12px 12px}}
 @media(prefers-reduced-motion:reduce){
   html{scroll-behavior:auto}
-  body,.fade,.pt-chev,.pt-body,.buy-btn,.menu-btn i,.menu-panel,.badge.available::before,.social a,.to-top,.nl-row input,.nl-row button,.footer-grid a,.f-legal a{transition:none;animation:none}
+  body,.fade,.pt-chev,.pt-body,.pt-row,.buy-btn,.menu-btn i,.menu-panel,.badge.available::before,.social a,.to-top,.nl-row input,.nl-row button,.footer-grid a,.f-legal a{transition:none;animation:none}
   .fade{opacity:1;transform:none}
 }
 </style>
@@ -175,10 +182,11 @@ h1{font-size:22px;line-height:1.3;margin:0 0 16px;font-weight:800;color:var(--na
         <a href="#event-lain">Event Untuk Kamu</a>
       </nav>
     </div>
+    <div class="progress" id="progress" aria-hidden="true"></div>
   </header>
 
   <form class="searchbar" role="search">
-    <input type="search" placeholder="Cari event" aria-label="Cari event">
+    <input type="search" placeholder="Cari event" aria-label="Cari event" enterkeyhint="search">
     <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="#3a4358" stroke-width="2.2" stroke-linecap="round" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.8-3.8"/></svg>
   </form>
 
@@ -210,7 +218,7 @@ h1{font-size:22px;line-height:1.3;margin:0 0 16px;font-weight:800;color:var(--na
     <hr class="divider">
 
     <div class="organizer">
-      <div class="org-logo"><img src="logo-promotor.webp" alt="Logo JUNI Concert" loading="lazy" decoding="async"></div>
+      <div class="org-logo"><img src="logo-promotor.jpg" alt="Logo JUNI Concert" loading="lazy" decoding="async"></div>
       <div>
         <div class="org-label">Diselenggarakan oleh</div>
         <div class="org-name">JUNI Concert</div>
@@ -218,9 +226,10 @@ h1{font-size:22px;line-height:1.3;margin:0 0 16px;font-weight:800;color:var(--na
     </div>
 
     <nav class="tabs" aria-label="Navigasi detail event">
-      <a class="tab active" href="#deskripsi">Deskripsi</a>
+      <a class="tab active" href="#deskripsi" aria-current="true">Deskripsi</a>
       <a class="tab" href="#tiket">Tiket</a>
       <a class="tab" href="#snk">Syarat dan Ketentuan</a>
+      <a class="tab" href="#event-lain">Event Untuk Kamu</a>
     </nav>
 
     <section class="section fade" id="deskripsi">
@@ -403,20 +412,29 @@ const goToTiket=()=>{
   document.body.classList.add('fade-out');
   setTimeout(()=>location.href='tiket.html',280);
 };
-window.addEventListener('pageshow',e=>{
-  if(e.persisted){document.body.classList.remove('fade-out');navigating=false}
-});
+window.addEventListener('pageshow',()=>{document.body.classList.remove('fade-out');navigating=false});
 const io=new IntersectionObserver(entries=>{
   entries.forEach(entry=>{
     if(entry.isIntersecting){entry.target.classList.add('show');io.unobserve(entry.target)}
   });
 },{threshold:.08});
 document.querySelectorAll('.fade').forEach(el=>io.observe(el));
-const tabs=document.querySelectorAll('.tab');
-tabs.forEach(tab=>tab.addEventListener('click',()=>{
-  tabs.forEach(t=>t.classList.remove('active'));
+const tabs=[...document.querySelectorAll('.tab')];
+const activateTab=tab=>{
+  tabs.forEach(t=>{t.classList.remove('active');t.removeAttribute('aria-current')});
   tab.classList.add('active');
-}));
+  tab.setAttribute('aria-current','true');
+};
+tabs.forEach(tab=>tab.addEventListener('click',()=>activateTab(tab)));
+const tabMap=new Map(tabs.map(t=>[t.getAttribute('href').slice(1),t]));
+const spy=new IntersectionObserver(es=>{
+  es.forEach(en=>{
+    if(!en.isIntersecting)return;
+    const tab=tabMap.get(en.target.id);
+    if(tab)activateTab(tab);
+  });
+},{rootMargin:'-70px 0px -65% 0px'});
+document.querySelectorAll('main .section').forEach(s=>spy.observe(s));
 const ticket=document.getElementById('ticket');
 const ticketHead=document.getElementById('ticketHead');
 ticketHead.addEventListener('click',()=>{
@@ -481,6 +499,18 @@ document.getElementById('nlForm').addEventListener('submit',e=>{
   e.target.reset();
 });
 document.getElementById('toTop').addEventListener('click',()=>window.scrollTo({top:0,behavior:REDUCED?'auto':'smooth'}));
+const progress=document.getElementById('progress');
+let ticking=false;
+const updateProgress=()=>{
+  const doc=document.documentElement;
+  const max=doc.scrollHeight-doc.clientHeight;
+  progress.style.transform='scaleX('+(max>0?doc.scrollTop/max:0)+')';
+  ticking=false;
+};
+window.addEventListener('scroll',()=>{
+  if(!ticking){ticking=true;requestAnimationFrame(updateProgress)}
+},{passive:true});
+updateProgress();
 })();
 </script>
 </body>
