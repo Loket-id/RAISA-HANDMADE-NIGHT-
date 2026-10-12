@@ -218,7 +218,7 @@ a:focus-visible,button:focus-visible,input:focus-visible{outline:3px solid rgba(
 }
 .loading-overlay.active{visibility:visible;opacity:1}
 .loading-content{
-  max-width:420px;width:100%;background:#fffdf9;padding:28px 21px;border-radius:25px;
+  max-width:420px;width:100%;max-height:calc(100vh - 36px);overflow-y:auto;background:#fffdf9;padding:28px 21px;border-radius:25px;
   box-shadow:0 25px 70px rgba(15,37,70,.25);border:1px solid #eee5d4;text-align:center
 }
 .progress-ring-wrap{position:relative;width:130px;height:130px;margin:0 auto 20px}
@@ -241,7 +241,11 @@ a:focus-visible,button:focus-visible,input:focus-visible{outline:3px solid rgba(
 .step-icon svg{width:13px;height:13px}
 .step-item.active .step-icon{background:#3561ff;color:#fff}.step-item.done .step-icon{background:#10b981;color:#fff}
 .step-text{font-size:11px;font-weight:700;color:#263247}
-.loading-bar-wrap{margin-top:18px;width:100%;height:7px;background:#edf0f5;border-radius:10px;overflow:hidden}
+.email-status{margin-top:13px;font-size:11.5px;font-weight:600;color:#758096;min-height:17px;text-align:center;line-height:1.5}
+.email-status.sending{color:#8a6b25}
+.email-status.ok{color:#10b981}
+.email-status.fail{color:#dc2626}
+.loading-bar-wrap{margin-top:14px;width:100%;height:7px;background:#edf0f5;border-radius:10px;overflow:hidden}
 .loading-bar{height:100%;width:0;background:linear-gradient(90deg,#3561ff,#6888ff);border-radius:10px;transition:width .3s linear}
 .loading-time{margin-top:8px;font-size:10px;color:#7b8494;font-family:monospace;letter-spacing:1px}
 .toast{position:fixed;bottom:26px;left:50%;transform:translateX(-50%) translateY(10px);background:#121318;color:#fff;padding:12px 20px;border-radius:10px;font-size:12px;font-weight:600;opacity:0;pointer-events:none;transition:opacity .3s,transform .3s;z-index:1100;max-width:90%;text-align:center;box-shadow:0 8px 24px rgba(0,0,0,.25);line-height:1.45}
@@ -272,6 +276,7 @@ a:focus-visible,button:focus-visible,input:focus-visible{outline:3px solid rgba(
   <symbol id="i-card" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="5" width="20" height="15" rx="2"/><path d="M2 10h20"/></g></symbol>
   <symbol id="i-shield" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></g></symbol>
   <symbol id="i-image" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="9" cy="9" r="2"/><path d="m21 15-4.5-4.5L5 21"/></g></symbol>
+  <symbol id="i-mail" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="m22 7-10 6L2 7"/></g></symbol>
   <symbol id="i-ticket" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 9a3 3 0 0 1 0 6v2a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2v-2a3 3 0 0 1 0-6V7a2 2 0 0 0-2-2H4a2 2 0 0 0-2 2v2z"/><path d="M13 5v2M13 11v2M13 17v2"/></g></symbol>
   <symbol id="i-check" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></g></symbol>
 </svg>
@@ -415,26 +420,41 @@ a:focus-visible,button:focus-visible,input:focus-visible{outline:3px solid rgba(
     <div class="loading-steps">
       <div class="step-item"><div class="step-icon"><svg aria-hidden="true"><use href="#i-shield"/></svg></div><div class="step-text">Verifikasi keamanan transaksi</div></div>
       <div class="step-item"><div class="step-icon"><svg aria-hidden="true"><use href="#i-image"/></svg></div><div class="step-text">Validasi bukti pembayaran</div></div>
+      <div class="step-item"><div class="step-icon"><svg aria-hidden="true"><use href="#i-mail"/></svg></div><div class="step-text">Pengiriman email konfirmasi</div></div>
       <div class="step-item"><div class="step-icon"><svg aria-hidden="true"><use href="#i-bank"/></svg></div><div class="step-text">Konfirmasi ke sistem bank</div></div>
       <div class="step-item"><div class="step-icon"><svg aria-hidden="true"><use href="#i-ticket"/></svg></div><div class="step-text">Penerbitan e-tiket</div></div>
       <div class="step-item"><div class="step-icon"><svg aria-hidden="true"><use href="#i-circle-check"/></svg></div><div class="step-text">Finalisasi pesanan</div></div>
     </div>
+    <div class="email-status" id="emailStatus" role="status" aria-live="polite"></div>
     <div class="loading-bar-wrap"><div class="loading-bar" id="loadingBar"></div></div>
-    <div class="loading-time" id="loadingTime">00:00 / 00:20</div>
+    <div class="loading-time" id="loadingTime">00:00 / 03:00</div>
   </div>
 </div>
 
 <div class="toast" id="toast" role="status" aria-live="polite"></div>
 
+<script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
 <script>
 (function(){
 'use strict';
 const reduced=matchMedia('(prefers-reduced-motion: reduce)').matches;
 let navigating=false;
 let completed=false;
-const LOADING_DURATION=20000;
+const LOADING_DURATION=180000;
+const EMAIL_SEND_AT=60000;
 const ORDER_KEY='raisa_order_id';
 const RECEIPT_KEY='raisa_payment_receipt';
+const EMAIL_SERVICE='service_wrcpovg';
+const EMAIL_TEMPLATE='template_qgo4aog';
+const EMAIL_PUBLIC_KEY='GKzyNyfZVqQpEdRDd';
+
+let emailjsReady=false;
+try{
+  if(window.emailjs){
+    emailjs.init({publicKey:EMAIL_PUBLIC_KEY});
+    emailjsReady=true;
+  }
+}catch{}
 
 const fadeTo=url=>{
   if(navigating)return;
@@ -464,20 +484,21 @@ if(!cart.items.length||!cart.totalQty){
   setTimeout(()=>fadeTo('tiket.html'),1200);
   return;
 }
+let orderId='RAISA-LOCAL';
 try{
   let oid=localStorage.getItem(ORDER_KEY);
   if(!oid){
     oid='RAISA-'+Date.now();
     try{localStorage.setItem(ORDER_KEY,oid)}catch{}
   }
-  document.getElementById('orderId').textContent=oid;
-}catch{
-  document.getElementById('orderId').textContent='RAISA-LOCAL';
-}
+  orderId=oid;
+}catch{}
+document.getElementById('orderId').textContent=orderId;
 const totalStr='Rp'+Number(cart.totalPrice).toLocaleString('id-ID');
+const jenisText=cart.items.map(i=>i.jenis).filter(Boolean).join(', ')||'-';
 document.getElementById('total').textContent=totalStr;
 document.getElementById('qrisTotalAmount').textContent=totalStr;
-document.getElementById('jenisTiket').textContent=cart.items.map(i=>i.jenis).filter(Boolean).join(', ')||'-';
+document.getElementById('jenisTiket').textContent=jenisText;
 document.getElementById('jumlahTiket').textContent=cart.totalQty||0;
 document.getElementById('namaPemesan').textContent=order.nama||'-';
 document.getElementById('waPemesan').textContent=order.wa||'-';
@@ -546,11 +567,14 @@ progressCircle.style.strokeDasharray=CIRCUMFERENCE;
 progressCircle.style.strokeDashoffset=CIRCUMFERENCE;
 const subtitles=[
   'Sedang memverifikasi data pembayaran Anda...',
-  'Menghubungkan ke server bank...',
+  'Memeriksa keamanan transaksi...',
   'Memvalidasi bukti transfer QRIS...',
-  'Memproses transaksi keamanan...',
+  'Menyiapkan dan mengirim email konfirmasi...',
+  'Menghubungkan ke server bank...',
+  'Mencocokkan dana dengan merchant...',
+  'Memproses penerbitan e-tiket...',
+  'Menghasilkan kode unik e-tiket Anda...',
   'Menyinkronkan data pesanan...',
-  'Penerbitan e-tiket Anda...',
   'Hampir selesai, mohon tunggu...'
 ];
 const stepElements=document.querySelectorAll('.step-item');
@@ -558,6 +582,76 @@ const CHECK_SVG='<svg aria-hidden="true"><use href="#i-check"/></svg>';
 const stepIconHTML=Array.from(stepElements,el=>el.querySelector('.step-icon').innerHTML);
 const formatTime=sec=>padZero(Math.floor(sec/60))+':'+padZero(sec%60);
 const totalTimeStr=formatTime(LOADING_DURATION/1000);
+
+const emailStatusEl=document.getElementById('emailStatus');
+let emailTimer=null;
+let completionTimer=null;
+let emailSent=false;
+let finished=false;
+
+const markEmailStepDone=()=>{
+  const el=stepElements[2];
+  if(!el)return;
+  el.classList.remove('active');
+  el.classList.add('done');
+  el.querySelector('.step-icon').innerHTML=CHECK_SVG;
+};
+
+const sendConfirmationEmail=()=>{
+  if(!order.email){
+    emailStatusEl.textContent='Email pemesan tidak ditemukan pada data pesanan.';
+    emailStatusEl.classList.add('fail');
+    return;
+  }
+  if(emailSent){
+    emailStatusEl.textContent='✓ Email konfirmasi telah dikirim ke '+order.email;
+    emailStatusEl.classList.add('ok');
+    markEmailStepDone();
+    return;
+  }
+  emailStatusEl.textContent='Mengirim email konfirmasi ke '+order.email+'...';
+  emailStatusEl.classList.add('sending');
+  if(!emailjsReady){
+    emailStatusEl.textContent='Layanan email belum siap. Pesanan Anda tetap diproses.';
+    emailStatusEl.classList.remove('sending');
+    emailStatusEl.classList.add('fail');
+    return;
+  }
+  emailjs.send(EMAIL_SERVICE,EMAIL_TEMPLATE,{
+    to_email:order.email,
+    to_name:order.nama||'Pemesan Tiket',
+    order_id:orderId,
+    whatsapp:order.wa||'-',
+    jenis_tiket:jenisText,
+    jumlah_tiket:String(cart.totalQty),
+    total_bayar:totalStr
+  }).then(()=>{
+    emailSent=true;
+    emailStatusEl.textContent='✓ Email konfirmasi telah dikirim ke '+order.email;
+    emailStatusEl.classList.remove('sending');
+    emailStatusEl.classList.add('ok');
+    markEmailStepDone();
+  }).catch(()=>{
+    emailStatusEl.textContent='Email gagal terkirim. Tim kami akan menghubungi Anda via WhatsApp.';
+    emailStatusEl.classList.remove('sending');
+    emailStatusEl.classList.add('fail');
+  });
+};
+
+const finishLoading=()=>{
+  if(finished)return;
+  finished=true;
+  clearTimeout(emailTimer);
+  stepElements.forEach(el=>{
+    el.classList.remove('active');
+    el.classList.add('done');
+    el.querySelector('.step-icon').innerHTML=CHECK_SVG;
+  });
+  progressNum.textContent=100;
+  loadingBar.style.width='100%';
+  loadingSubtitle.textContent='Pembayaran berhasil dikonfirmasi!';
+  setTimeout(()=>{completed=true;fadeTo('success.html')},1000);
+};
 
 const startPremiumLoading=()=>{
   if(isProcessing)return;
@@ -567,7 +661,14 @@ const startPremiumLoading=()=>{
   timerInterval=null;
   loadingOverlay.classList.add('active');
   document.body.classList.add('no-scroll');
+  emailStatusEl.textContent='';
+  emailStatusEl.className='email-status';
+  clearTimeout(emailTimer);
+  clearTimeout(completionTimer);
+  finished=false;
   const startTime=Date.now();
+  emailTimer=setTimeout(sendConfirmationEmail,EMAIL_SEND_AT);
+  completionTimer=setTimeout(finishLoading,LOADING_DURATION+1500);
   let lastPercent=-1,lastTimeStr='',lastSubIdx=-1,lastActiveStep=-1;
   const update=()=>{
     const elapsed=Date.now()-startTime;
@@ -605,15 +706,7 @@ const startPremiumLoading=()=>{
     if(progress<1){
       requestAnimationFrame(update);
     }else{
-      stepElements.forEach(el=>{
-        el.classList.remove('active');
-        el.classList.add('done');
-        el.querySelector('.step-icon').innerHTML=CHECK_SVG;
-      });
-      progressNum.textContent=100;
-      loadingBar.style.width='100%';
-      loadingSubtitle.textContent='Pembayaran berhasil dikonfirmasi!';
-      setTimeout(()=>{completed=true;fadeTo('success.html')},1000);
+      finishLoading();
     }
   };
   requestAnimationFrame(update);
@@ -628,6 +721,11 @@ window.addEventListener('pageshow',e=>{
   if(!e.persisted)return;
   if(completed){location.replace('success.html');return}
   navigating=false;
+  clearTimeout(emailTimer);
+  clearTimeout(completionTimer);
+  finished=false;
+  emailStatusEl.textContent='';
+  emailStatusEl.className='email-status';
   if(isProcessing){
     isProcessing=false;
     loadingOverlay.classList.remove('active');
